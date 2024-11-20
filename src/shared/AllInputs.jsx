@@ -389,24 +389,29 @@ export const CustomPasswordInput = ({
 };
 
 //New
-export const CustomSearch = ({ value = "", onChange }) => {
+export const CustomSearch = ({ value = "", onChange, placeholder = "Search" }) => {
   const [search, setSearch] = useState(value);
+
   useEffect(() => {
+    setSearch(value);
+  }, [value]);
+
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+    setSearch(newValue);
     if (onChange) {
-      onChange(search);
-    } // eslint-disable-next-line
-  }, [search]);
+      onChange(newValue);
+    }
+  };
 
   return (
-    <div className="search-box">
-      <i className="pi pi-search" />
-      <InputText
-        className="w-full"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        type="text"
-      />
-    </div>
+    <InputText
+      className="p-inputtext-sm surface-200"
+      style={{ width: '200px' }}
+      value={search}
+      onChange={handleChange}
+      placeholder={placeholder}
+    />
   );
 };
 

@@ -39,14 +39,14 @@ export default function SidebarItem(props) {
   return (
     <>
       <div
-        className={classNames("sidebar-item flex justify-content-between", {
+        className={classNames("sidebar-item flex justify-content-between align-items-center", {
           active: isOpen || getActive(_link),
         })}
         onClick={onItemClick}
       >
-        <div className="flex">
-          {_icon && <i className={`text-lg  mr-2 ${_icon}`}></i>}
-          <div className="my-auto">{_title}</div>
+        <div className="flex align-items-center">
+          {_icon && <i className={`text-lg mr-2 ${_icon}`}></i>}
+          <span>{_title}</span>
         </div>
         {_items && _items.length && (
           <i

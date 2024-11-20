@@ -16,14 +16,31 @@ $white-color: #ffffff;
 
 $border-color: #e5e7eb;
 $bg-color-primary: #ffffff;
-$bg-color-secondary: #f1f5f966;
+$bg-color-secondary: #f4f6f9;
 
-$text-color-primary: #020817;
+$text-color-primary: #1F2937;
 $text-label-color: #4e5b76;
-$text-color-secondary: #22242b;
+$text-color-secondary: #4B5563;
+$link-color: #2563EB;
 
-$border-radius: 6px;
+$border-radius: 10px;
 $transitionDuration: 0.5s;
 $gutter: 5px;
 $sidebar-width: 250px;
-$topbar-height: 4rem;
+$topbar-height: 3rem;
+
+$menu-item-hover: #E6EDF5;
+
+// Status Colors
+$status-ready: #22C55E;
+$status-ready-bg: #F0FDF4;
+$status-running: #06B6D4;
+$status-running-bg: #ECFEFF;
+$status-stopping: #F87171;
+$status-stopping-bg: #FEF2F2;
+$status-stopped: #EF4444;
+$status-stopped-bg: #FEF2F2;
+$status-starting: #EC4899;
+$status-starting-bg: #FDF2F8;
+$status-paused: #EAB308;
+$status-paused-bg: #FEFCE8;

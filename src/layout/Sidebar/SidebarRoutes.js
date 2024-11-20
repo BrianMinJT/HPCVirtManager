@@ -14,6 +14,10 @@ export const sidebarItems = [
         link: "/list",
       },
       {
+        title: "Templates",
+        link: "/templates",
+      },
+      {
         title: "Live Migrations",
         link: "/live-migrations",
       },

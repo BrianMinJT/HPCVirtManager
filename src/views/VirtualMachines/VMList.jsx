@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Page from "../../shared/Page";
 import { timeAgo } from "../../utils/date";
 import CustomOverlay from "../../shared/CustomOverlay";
@@ -7,8 +7,7 @@ import { Column } from "primereact/column";
 import CustomBreadcrum from "../../shared/CustomBreadcrum";
 import { useDispatch, useSelector } from "react-redux";
 import { getVMsAction } from "../../store/actions/projectActions";
-import { Link } from "react-router-dom";
-import AddVirtualMachineModal from "./Form/AddVirtualMachineModal";
+import { Link, useNavigate } from "react-router-dom";
 import {
   onChangeVmStatusAction,
   onDeleteVMAction,
@@ -25,40 +24,62 @@ import {
   checkNamespaceValue,
 } from "../../utils/commonFunctions";
 import { getImagesAction } from "../../store/actions/imageActions";
+import { Tooltip } from "primereact/tooltip";
 
 const timeTemplate = (item) => {
   return <>{timeAgo(item.time)}</>;
 };
 
 const statusTemplate = (item) => {
-  switch (item.status) {
-    case "Starting":
-      return <span className="text-pink-400">Starting</span>;
-    case "Ready":
-      return <span className="text-green-500">Ready</span>;
-    case "Running":
-      return <span className="text-cyan-500">Running</span>;
-    case "Stopping":
-      return <span className="text-red-400">Stopping</span>;
-    case "Stopped":
-      return <span className="text-red-500">Stopped</span>;
-    case "Paused":
-      return <span className="text-yellow-500">Paused</span>;
-    default:
-      return <span>{item.status}</span>;
-  }
+  const getStatusClass = (status) => {
+    const baseClasses = "text-sm px-2 py-0.5 rounded-lg inline-block font-medium border";
+    switch (status) {
+      case "Starting":
+        return `${baseClasses} text-pink-700 bg-pink-50 border-pink-200`;
+      case "Ready":
+        return `${baseClasses} text-green-700 bg-green-50 border-green-200`;
+      case "Running":
+        return `${baseClasses} text-cyan-700 bg-cyan-50 border-cyan-200`;
+      case "Stopping":
+        return `${baseClasses} text-red-700 bg-red-50 border-red-200`;
+      case "Stopped":
+        return `${baseClasses} text-red-700 bg-red-50 border-red-200`;
+      case "Paused":
+        return `${baseClasses} text-yellow-700 bg-yellow-50 border-yellow-200`;
+      default:
+        return `${baseClasses} text-gray-700 bg-gray-50 border-gray-200`;
+    }
+  };
+
+  return <span className={getStatusClass(item.status)}>{item.status}</span>;
+};
+
+const osTemplate = (item) => {
+  const tooltipId = `os-tooltip-${item.id}`;
+  return (
+    <>
+      <span
+        data-pr-tooltip={item.guestOS ? undefined : "OS information is only available for running VMs with guest agent installed"}
+        data-pr-position="top"
+        data-pr-at="center+2 top-2"
+        className="cursor-help"
+      >
+        {item.guestOS || '-'}
+      </span>
+      <Tooltip target={`[data-pr-tooltip]`} />
+    </>
+  );
 };
 
 const breadcrumItems = [
   { label: "Virtual Machines", url: "/#/virtual-machines/list" },
   { label: "All VMs", url: "/#/virtual-machines/list" },
 ];
+
 export default function VMList() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { profile, userNamespace } = useSelector((state) => state.user);
-
-  console.log("userNamespace",userNamespace);
-  
   let { vms, namespacesDropdown } = useSelector((state) => state.project);
 
   const hasAccess = () => {
@@ -71,6 +92,37 @@ export default function VMList() {
       return filteredNamespaces.length > 0;
     }
   };
+
+  const [search, setSearch] = useState("");
+  const [selectedNamespace, setSelectedNamespace] = useState("");
+  const [selectedVm, setSelectedVm] = useState(null);
+  const [migrateVisible, setMigrateVisible] = useState(false);
+  const [editVisible, setEditVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    dispatch(getVMsAction());
+    dispatch(getImagesAction());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (namespacesDropdown.length) {
+      const _namespaces = filterNamespacesByCrudVMS(
+        namespacesDropdown,
+        userNamespace
+      );
+      if (_namespaces.length) {
+        setSelectedNamespace(_namespaces[0]);
+      }
+    }
+  }, [namespacesDropdown, userNamespace]);
+
+  useEffect(() => {
+    if (selectedNamespace) {
+      dispatch(getVMsAction(selectedNamespace));
+      dispatch(getImagesAction(selectedNamespace));
+    }
+  }, [selectedNamespace, dispatch]);
 
   const actionTemplate = (item) => {
     return (
@@ -165,11 +217,6 @@ export default function VMList() {
     );
   };
 
-  useEffect(() => {
-    dispatch(getVMsAction());
-    dispatch(getImagesAction());
-  }, [dispatch]);
-
   const vmname = (item) => {
     if (
       checkNamespaceValue(userNamespace, item.namespace, "crudVMS") ||
@@ -184,11 +231,14 @@ export default function VMList() {
       return <>{item.name}</>;
     }
   };
-  const [visible, setVisible] = useState(false);
-  const [editInfo, setEditInfo] = useState(null);
-  const [onOpenMigrate, setOpenMigrate] = useState(false);
 
-  const ref = useRef();
+  vms = useMemo(
+    () =>
+      vms.filter((item) =>
+        item?.name?.toLowerCase()?.includes(search?.toLowerCase())
+      ),
+    [search, vms]
+  );
 
   const showError = () => {
     dispatch(
@@ -256,16 +306,15 @@ export default function VMList() {
       checkNamespaceValue(userNamespace, item.namespace, "crudVMS") ||
       profile?.role === "admin"
     ) {
-      setOpenMigrate(item);
+      navigate("/virtual-machines/migrate", { state: item });
     } else {
       showError();
     }
   };
   const onOpenConsole = ({ name, namespace }) => {
     window.open(
-      `${constants.baseUrl}/assets/noVNC/vnc.html?resize=scale&autoconnect=1&path=/k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/${namespace}/virtualmachineinstances/${name}/vnc`,
-      "mywindow",
-      "menubar=1,resizable=1,width=500,height=350"
+      `${constants.CONSOLE_URL}/?namespace=${namespace}&name=${name}`,
+      "_blank"
     );
   };
   const onEdit = (item) => {
@@ -273,7 +322,7 @@ export default function VMList() {
       checkNamespaceValue(userNamespace, item.namespace, "crudVMS") ||
       profile?.role === "admin"
     ) {
-      setEditInfo(item);
+      navigate("/virtual-machines/edit", { state: item });
     } else {
       showError();
     }
@@ -284,12 +333,10 @@ export default function VMList() {
       profile?.role === "admin"
     ) {
       confirmDialog({
-        target: ref.currentTarget,
+        message: "Do you want to delete this record?",
         header: "Delete Confirmation",
-        message: `Do you want to delete ${item.namespace} - ${item.name} ?`,
         icon: "pi pi-info-circle",
-        rejectClassName: "p-button-outlined p-button-secondary",
-        acceptClassName: " primary-button",
+        position: "top",
         accept: () => {
           dispatch(onDeleteVMAction(item));
         },
@@ -299,22 +346,12 @@ export default function VMList() {
     }
   };
 
-  const [search, setSearch] = useState("");
-
-  vms = useMemo(
-    () =>
-      vms.filter((item) =>
-        item?.name?.toLowerCase()?.includes(search?.toLowerCase())
-      ),
-    [search, vms]
-  );
-
-  const addVm = () => {
+  const onAdd = () => {
     if (profile.role === "admin") {
-      setVisible(true);
+      navigate("/virtual-machines/add");
     } else {
       if (hasAccess) {
-        setVisible(true);
+        navigate("/virtual-machines/add");
       } else {
         dispatch(
           showToastAction({
@@ -327,33 +364,28 @@ export default function VMList() {
   };
 
   return (
-    <>
-      <CustomBreadcrum items={breadcrumItems} />
-      <Page
-        title="Virtual Machines"
-        onSearch={setSearch}
-        onRefresh={() => {
-          dispatch(getVMsAction());
-        }}
-        onAdd={addVm}
-        addText="Add Virtual Machine"
-      >
-        <DataTable value={vms} tableStyle={{ minWidth: "50rem" }}>
-          <Column field="name" header="Name" body={vmname}></Column>
-          <Column field="status" header="Status" body={statusTemplate}></Column>
-          <Column field="conditions" header="Conditions"></Column>
-          <Column field="time" header="Created" body={timeTemplate}></Column>
-          <Column field="ipAddress" header="IP Address"></Column>
-          <Column field="guestOS" header="Guest OS"></Column>
-          <Column field="node" header="Node"></Column>
-          <Column field="namespace" header="Namespace"></Column>
-          <Column field="cluster" header="Cluster"></Column>
-          <Column body={actionTemplate}></Column>
-        </DataTable>
-        <AddVirtualMachineModal visible={visible} setVisible={setVisible} />
-        <MigrateModal visible={onOpenMigrate} setVisible={setOpenMigrate} />
-        <EditVmModal visible={editInfo} setVisible={setEditInfo} />
-      </Page>
-    </>
+    <Page
+      title="Virtual Machines"
+      onSearch={setSearch}
+      onRefresh={() => {
+        dispatch(getVMsAction());
+      }}
+      onAdd={onAdd}
+      breadcrumb={<CustomBreadcrum items={breadcrumItems} />}
+      addText="Add Virtual Machine"
+    >
+      <DataTable value={vms} tableStyle={{ minWidth: "50rem" }}>
+        <Column field="status" header="Status" body={statusTemplate}></Column>
+        <Column field="name" header="Name" body={vmname}></Column>
+        <Column field="guestOS" header="OS" body={osTemplate}></Column>
+        <Column field="time" header="Created" body={timeTemplate}></Column>
+        <Column field="node" header="Node"></Column>
+        <Column field="namespace" header="Namespace"></Column>
+        <Column field="cluster" header="Cluster"></Column>
+        <Column body={actionTemplate}></Column>
+      </DataTable>
+      <MigrateModal visible={migrateVisible} setVisible={setMigrateVisible} />
+      <EditVmModal visible={editVisible} setVisible={setEditVisible} />
+    </Page>
   );
 }

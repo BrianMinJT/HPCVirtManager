@@ -1,0 +1,68 @@
+@import "../../../assets/styles/variables";
+
+.template-selection-modal {
+  .template-tabs {
+    .p-tabview-nav {
+      border-bottom-color: $border-color;
+    }
+  }
+
+  .template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+
+  .template-card {
+    background: $bg-color-primary;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    &:hover {
+      border-color: $link-color;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .template-icon {
+      font-size: 2rem;
+      color: $link-color;
+      margin-bottom: 1rem;
+    }
+
+    .template-info {
+      .template-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem;
+        color: $text-color-primary;
+      }
+
+      .template-subtitle {
+        font-size: 0.9rem;
+        color: $text-color-secondary;
+        margin: 0;
+      }
+    }
+  }
+
+  .no-templates {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: $text-color-secondary;
+    background: $bg-color-secondary;
+    border-radius: $border-radius;
+  }
+}

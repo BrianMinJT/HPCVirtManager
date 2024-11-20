@@ -1,6 +1,44 @@
-th {
-  background-color: transparent !important;
-}
-tr {
-  background-color: transparent !important;
+.p-datatable {
+  background-color: $white-color !important;
+  border: 0.5px solid $border-color;
+  border-radius: $border-radius;
+  
+  .p-datatable-wrapper {
+    border-radius: $border-radius;
+    overflow: hidden;
+  }
+  
+  .p-datatable-thead > tr > th {
+    background-color: $bg-color-secondary !important;
+    color: $text-color-primary;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-width: 0 0 1px 0;
+    border-color: $border-color;
+  }
+
+  .p-datatable-tbody > tr {
+    background-color: $white-color !important;
+    font-weight: 500;
+    
+    > td {
+      padding: 1rem;
+      border-width: 0 0 1px 0;
+      border-color: $border-color;
+    }
+
+    &:hover {
+      background-color: rgba($bg-color-secondary, 0.5) !important;
+    }
+
+    &:last-child > td {
+      border-bottom: none;
+    }
+  }
+
+  &.p-datatable-hoverable-rows {
+    .p-datatable-tbody > tr:not(.p-highlight):hover {
+      background-color: rgba($bg-color-secondary, 0.5) !important;
+    }
+  }
 }

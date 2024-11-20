@@ -10,11 +10,16 @@ import formValidation from "../../../utils/validations";
 import { confirmPopup } from "primereact/confirmpopup";
 
 export default function Storage({ disk, setDisk, index, onRemoveDisk, data }) {
-  const { storageClassesDropdown, accessModeDropdown, disks, images } =
+  const { storageClassesDropdown, accessModeDropdown, disksDropdown, images } =
     useSelector((state) => state.project);
 
   const handleChangeDisk = ({ name, value }) => {
     let formErrors = formValidation(name, value, disk);
+    // Don't validate cache if it's false (Automatic)
+    if (name === "cache" && value === false) {
+      formErrors = {};
+    }
+    // Reset errors when changing create type
     if (name === "createType") {
       formErrors = {};
     }
@@ -70,10 +75,10 @@ export default function Storage({ disk, setDisk, index, onRemoveDisk, data }) {
 
   const filteredDiskes = useMemo(
     () =>
-      disks
+      disksDropdown
         .filter((item) => item.namespace === data?.namespace)
         .map((item) => item?.name),
-    [disks, data]
+    [disksDropdown, data]
   );
 
   const imagesDropdown = useMemo(
@@ -178,7 +183,7 @@ export default function Storage({ disk, setDisk, index, onRemoveDisk, data }) {
             data={disk}
             onChange={handleChangeDisk}
             name="disk"
-            options={filteredDiskes}
+            options={disksDropdown.map((disk) => ({ name: disk, value: disk }))}
             required
             col={12}
           />

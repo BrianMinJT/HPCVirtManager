@@ -66,6 +66,18 @@
   .p-menuitem {
     font-size: 13px;
   }
+  .p-breadcrumb-links li .p-menuitem-link {
+    color: $link-color;
+    text-decoration: none;
+
+    &:hover {
+      color: darken($link-color, 10%);
+    }
+
+    .p-menuitem-text {
+      color: inherit;
+    }
+  }
 }
 
 .p-datatable .p-datatable-thead > tr > th {
@@ -89,4 +101,19 @@
 .p-button.p-button-icon-only {
   width: 30px;
   padding: 0;
+}
+
+.p-component {
+  font-family: var(--font-family);
+}
+
+.p-button.refresh-button {
+  background-color: $bg-color-primary;
+  border-color: $border-color;
+  color: $text-color-secondary;
+
+  &:enabled:hover {
+    background-color: darken($bg-color-primary, 3%);
+    border-color: $border-color;
+  }
 }

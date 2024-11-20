@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "primereact/button";
 import { SplitButton } from "primereact/splitbutton";
+
 export default function CustomButton({
   label = "Submit",
   extraClassNames,
@@ -16,18 +17,21 @@ export default function CustomButton({
     />
   );
 }
+
 export function CustomButtonOutlined({ label = "Submit", ...props }) {
+  const isRefreshButton = label === "Refresh";
   return (
     <Button
-      className="align-center mx-2"
+      className={`align-center mx-2 ${isRefreshButton ? 'refresh-button' : ''}`}
       label={label}
       style={{ alignSelf: "center" }}
-      outlined
+      outlined={!isRefreshButton}
       size="small"
       {...props}
     />
   );
 }
+
 export function CustomSplitButton({ label = "Submit", ...props }) {
   return (
     <SplitButton
@@ -39,6 +43,7 @@ export function CustomSplitButton({ label = "Submit", ...props }) {
     />
   );
 }
+
 export function Buttonlayout({ className, position = "end", children }) {
   return (
     <div className={`flex my-2 justify-content-${position} ${className}`}>

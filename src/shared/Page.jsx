@@ -12,13 +12,25 @@ export default function Page({
   onAdd,
   addText = "Add",
   headers,
+  titleAction,
 }) {
   return (
     <div className="page">
       <div className="mb-4">
-        <div className="flex justify-content-between flex-wrap">
-          {title && <div className="page-title">{title}</div>}
-          <div className="flex flex-wrap">
+        <div className="flex justify-content-between align-items-center flex-wrap">
+          <div className="flex-column">
+            {title && <div className="page-title">{title}</div>}
+            {description && <div className="page-description">{description}</div>}
+          </div>
+          <div className="flex align-items-center gap-2">
+            {(search || onSearch) && (
+              <CustomSearch
+                value={search}
+                onChange={onSearch}
+                placeholder="Search"
+              />
+            )}
+            {titleAction}
             {onAdd && (
               <CustomButton label={addText} icon="pi pi-plus" onClick={onAdd} />
             )}
@@ -30,13 +42,11 @@ export default function Page({
                 onClick={onRefresh}
               />
             )}
-            {onSearch && <CustomSearch value={search} onChange={onSearch} />}
-            {headers}
           </div>
         </div>
-        {description && <div className="mt-2">{description}</div>}
+        {headers}
       </div>
-      {children && <div className="mt-2">{children}</div>}
+      {children}
     </div>
   );
 }

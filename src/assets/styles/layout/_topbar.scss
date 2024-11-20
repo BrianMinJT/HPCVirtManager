@@ -6,16 +6,58 @@
   top: 0;
   width: 100%;
   padding: 10px;
-  // background-color: $sidebar-color;
   color: $text-color-primary;
   border-bottom: 1px solid $border-color;
   display: flex;
   align-items: center;
   justify-content: space-between;
   transition: $transitionDuration;
+  background-color: $bg-color-secondary;
+
+  .p-breadcrumb {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    font-size: 0.875rem;
+    display: block !important;
+    
+    .p-breadcrumb-list {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .p-menuitem-link {
+      padding: 0;
+      &:focus {
+        box-shadow: none;
+      }
+      
+      .p-menuitem-text {
+        color: $text-color-secondary;
+      }
+      
+      &:hover .p-menuitem-text {
+        color: $text-color-primary;
+      }
+    }
+    
+    .p-menuitem:last-child {
+      .p-menuitem-text {
+        color: $text-color-primary;
+        font-weight: 500;
+      }
+    }
+
+    .p-breadcrumb-chevron {
+      margin: 0 0.5rem;
+    }
+  }
 
   .logo {
-    height: calc($topbar-height - 30px);
+    height: calc($topbar-height - 20px);
     width: 100%;
     svg {
       height: 100%;
@@ -29,15 +71,15 @@
     justify-content: center;
     border-right: 1px solid #344967;
     transition: 0.2s;
-    margin-right: 40px;
+    margin-right: 30px;
 
     .toggle-button2 {
       position: relative;
       z-index: 2;
       right: -55px;
       background-color: #c5c4c4;
-      width: 25px;
-      height: 25px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       text-align: center;
       display: flex;
@@ -59,8 +101,8 @@
     z-index: 2;
     left: -25px;
     background-color: #c5c4c4;
-    width: 25px;
-    height: 25px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     text-align: center;
     display: flex;
@@ -72,12 +114,13 @@
 
   .page-title {
     font-family: "DM Sans", sans-serif;
-    font-size: 24px;
+    font-size: clamp(16px, 2vw, 20px);
     font-weight: 700;
   }
+  
   .username {
     font-family: "DM Sans", sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
   }
 

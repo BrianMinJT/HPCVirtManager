@@ -1,0 +1,102 @@
+@import "../../assets/styles/variables";
+
+.modal-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  position: relative;
+  background: $bg-color-secondary;
+  border-radius: $border-radius;
+  padding: 2rem;
+  max-width: 90%;
+  width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 1001;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-color-secondary;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $text-color-primary;
+    }
+  }
+
+  .modal-header {
+    margin-bottom: 1.5rem;
+    padding-right: 2rem;
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: $text-color-primary;
+      margin: 0;
+    }
+
+    .modal-subtitle {
+      margin: 0.5rem 0 0;
+      color: $text-color-secondary;
+    }
+  }
+
+  .modal-content {
+    position: relative;
+  }
+}
+
+// Animation
+.modal-wrapper {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
